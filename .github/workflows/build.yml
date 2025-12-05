@@ -25,7 +25,7 @@ jobs:
 
             - name: Upload to release
               if: github.event_name == 'release'
-              uses: softprops/action-gh-release@v2
+              uses: "marvinpinto/action-automatic-releases@latest"
               with:
                   repo_token: "${{ secrets.GITHUB_TOKEN }}"
                   automatic_release_tag: latest
