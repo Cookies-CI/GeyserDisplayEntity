@@ -23,12 +23,20 @@ jobs:
             - name: Build with Maven
               run: mvn -B package
 
-            - name: Upload to release
-              uses: "marvinpinto/action-automatic-releases@latest"
+            - name: Cache Maven packages
+              uses: actions/cache@v4
               with:
-                  repo_token: "${{ secrets.GITHUB_TOKEN }}"
-                  automatic_release_tag: latest
-                  prerelease: false
-                  files: |
-                    build/libs/GeyserDisplayEntity*.jar
-                    packs/*.mcpack
+                  path: ~/.m2
+                  key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Plugin
+                  path: target/*.jar
+
+            - name: Upload to release
+              if: github.event_name == 'release'
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: target/*.jar
